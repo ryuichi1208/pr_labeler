@@ -4,10 +4,10 @@ repo:
 
 bug:
   - ./*
-  
+
 documentation:
   - ./*
-  
+
 # Add '@domain/core' label to any change within the 'core' package
 @domain/core:
   - package/core/*
