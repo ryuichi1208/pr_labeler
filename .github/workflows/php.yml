@@ -41,7 +41,17 @@ jobs:
       - name: Run php lint
         run: |
           ./vendor/bin/phplint --exclude=vendor ./app -vv
-          
+
+      - name: Slack Notification (not success)
+        uses: lazy-actions/slatify@master
+        if: "! success()"
+        with:
+          job_name: '*build*'
+          type: ${{ job.status }}
+          icon_emoji: ":octocat:"
+          url: ${{ secrets.SLACK_WEBHOOK }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
   build_and_deploy:
     needs: [lint]
 
