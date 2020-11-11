@@ -1,5 +1,3 @@
-# This is a basic workflow to help you get started with Actions
-
 name: PHP CI
 
 on:
@@ -39,4 +37,17 @@ jobs:
 
       - name: Run php lint
         run: |
-          ./vendor/bin/phplint --exclude=vendor ./app
+          ./vendor/bin/phplint --exclude=vendor ./app -vv
+          
+  build_and_deploy:
+    needs: [lint]
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build tar archive
+        run: |
+          tar cvf zip.tar.gz --exclude tests/ ./
+          ls -lhi zip.tar.gz
