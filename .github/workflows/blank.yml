@@ -50,5 +50,4 @@ jobs:
       - name: Insatll phplint
         run: |
           composer require overtrue/phplint --dev -vvv
-          ls -la
-          phplint --version
+          ./vendor/bin/phplint --version
