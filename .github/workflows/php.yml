@@ -82,4 +82,4 @@ jobs:
       - name: Deploy target
         run: |
           echo "$TARGET_SERVER_IP へ deployする処理を書く"
-        if: ${{ github.event.inputs.deploy_on == true }}
+        if: github.event.inputs.deploy_on == "true"
