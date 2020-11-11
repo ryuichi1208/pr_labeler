@@ -36,10 +36,18 @@ jobs:
       - uses: actions/labeler@main
         with:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
-      
-      - name: run
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install composer
         run: |
           php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
           php composer-setup.php
           sudo mv composer.phar /usr/local/bin/composer
-          composer
+          composer --version
+
+      - name: Insatll phplint
+        run: |
+          composer require overtrue/phplint --dev -vvv
+          phplint --version
