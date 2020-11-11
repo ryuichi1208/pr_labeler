@@ -36,3 +36,7 @@ jobs:
         run: |
           composer require overtrue/phplint --dev -vvv
           ./vendor/bin/phplint --version
+
+      - name: Run php lint
+        run: |
+          ./vendor/bin/phplint --exclude=vendor ./app
