@@ -44,7 +44,7 @@ jobs:
 
       - name: Slack Notification (not success)
         uses: lazy-actions/slatify@master
-        if: "! success()"
+        if: "always"
         with:
           job_name: '*build*'
           type: ${{ job.status }}
