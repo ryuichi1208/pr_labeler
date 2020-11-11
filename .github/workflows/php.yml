@@ -51,3 +51,7 @@ jobs:
         run: |
           tar cvf zip.tar.gz --exclude tests/ ./
           ls -lhi zip.tar.gz
+
+      - name: Deploy target
+        run: |
+          echo "deployするよ"
