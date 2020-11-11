@@ -25,7 +25,7 @@ jobs:
 
     strategy:
       matrix:
-        php: ["${PHP_VERSION}"]
+        php: [ "${{env.PHP_VERSION}}" ]
 
     steps:
       - uses: actions/checkout@v2
