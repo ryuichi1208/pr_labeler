@@ -5,9 +5,18 @@ on:
     branches: [ main,develop ]
   pull_request:
     branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      deploy_on:
+        description: 'デプロイを行う際は手動で実行させる'
+        required: true
+        default: false
+
 
 env:
+  # CI時にPHPのバージョンを切り替える用に変数としておく
   PHP_VERSION: "7.3"
+  # デプロイ先のサーバのIPを定義しておく
   TARGET_SERVER_IP: "10.0.0.x"
 
 jobs:
@@ -39,10 +48,12 @@ jobs:
           composer require overtrue/phplint --dev -vvv
           ./vendor/bin/phplint --version
 
+      # ユーザアプリケーションのlintを実行する
       - name: Run php lint
         run: |
           ./vendor/bin/phplint --exclude=vendor ./app -vv
 
+      # lint失敗時はslackへ通知する
       - name: Slack Notification (not success)
         uses: lazy-actions/slatify@master
         if: "! success()"
@@ -50,10 +61,11 @@ jobs:
           job_name: '*build*'
           type: ${{ job.status }}
           icon_emoji: ":octocat:"
-          url: ${{ secrets.SLACK_WEBHOOK }}
+          url: ${{ secrets.SLACK_WEBHOOK }} # slack通知用のwebhookurlは表示されると困るのでsecretsに定義しておく
           token: ${{ secrets.GITHUB_TOKEN }}
 
   build_and_deploy:
+    # lintが通ってない場合はリリースを行わない
     needs: [lint]
 
     runs-on: ubuntu-latest
@@ -61,6 +73,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      # ビルドでは無いけどtarに固める
       - name: Build tar archive
         run: |
           tar cvf zip.tar.gz --exclude tests/ ./
@@ -69,3 +82,4 @@ jobs:
       - name: Deploy target
         run: |
           echo "$TARGET_SERVER_IP へ deployする処理を書く"
+        if: ${{ github.event.inputs.deploy_on == true }}
