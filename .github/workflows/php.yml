@@ -12,7 +12,6 @@ on:
         required: true
         default: false
 
-
 env:
   # デプロイ先のサーバのIPを定義しておく
   TARGET_SERVER_IP: "10.0.0.x"
@@ -20,6 +19,7 @@ env:
 jobs:
   lint:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     strategy:
       fail-fast: false
@@ -69,6 +69,7 @@ jobs:
     needs: [lint]
 
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     steps:
       - uses: actions/checkout@v2
@@ -79,7 +80,24 @@ jobs:
           tar cvf zip.tar.gz --exclude tests/ ./
           ls -lhi zip.tar.gz
 
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: zip.tar.gz
+          path: zip.tar.gz
+
       - name: Deploy target
         run: |
           echo "$TARGET_SERVER_IP へ deployする処理を書く"
         if: github.event.inputs.deploy_on == 'true'
+
+      # デプロイ時は必ず通知を投げる
+      - name: Slack Notification
+        uses: lazy-actions/slatify@master
+        if: always() && github.event.inputs.deploy_on == 'true'
+        with:
+          job_name: '*deploy*'
+          type: ${{ job.status }}
+          icon_emoji: ":octocat:"
+          url: ${{ secrets.SLACK_WEBHOOK }}
+          token: ${{ secrets.GITHUB_TOKEN }}
