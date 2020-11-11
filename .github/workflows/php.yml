@@ -1,0 +1,38 @@
+# This is a basic workflow to help you get started with Actions
+
+name: PHP CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        php: [ '7.2', '7.3' ]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup PHP
+        uses: nanasess/setup-php@master
+        with:
+          php-version: ${{ matrix.php }}
+
+      - name: Install composer
+        run: |
+          php --version
+          php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+          php composer-setup.php
+          sudo mv composer.phar /usr/local/bin/composer
+          composer --version
+
+      - name: Insatll phplint
+        run: |
+          composer require overtrue/phplint --dev -vvv
+          ./vendor/bin/phplint --version
