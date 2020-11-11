@@ -36,8 +36,6 @@ jobs:
       - uses: actions/labeler@main
         with:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
-
-      - uses: php-actions/composer@v2
       
       - name: run
         run: |
